@@ -95,7 +95,7 @@ namespace SlotBookingAPI
         public static void ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<TokenOptions>(configuration.GetSection("Jwt"));
-            services.Configure<TokenOptions>(configuration.GetSection("AvailabilityApi"));
+            services.Configure<AvailabilityApiOptions>(configuration.GetSection("AvailabilityApi"));
         }
     }
 }
