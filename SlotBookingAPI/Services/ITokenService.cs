@@ -1,7 +1,9 @@
-﻿namespace SlotBookingAPI.Services
+﻿using SlotBookingAPI.Model;
+
+namespace SlotBookingAPI.Services
 {
     public interface ITokenService
     {
-        string GenerateJwtToken(string userId);
+        TokenResponse? GenerateJwtToken(TokenRequest tokenRequest);
     }
 }
