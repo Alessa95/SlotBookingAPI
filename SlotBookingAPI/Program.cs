@@ -1,3 +1,7 @@
+using FluentValidation;
+using MediatR;
+using SlotBooking.Application;
+using SlotBooking.Application.Slot.Commands;
 using SlotBooking.Application.Slot.Queries;
 using SlotBookingAPI;
 using SlotBookingAPI.Middleware;
@@ -14,9 +18,14 @@ builder.Services.AddMediatR(options =>
     options.RegisterServicesFromAssemblies(typeof(GetWeeklyAvailabilityQueryHandler).Assembly);
 });
 
+builder.Services.AddValidatorsFromAssemblyContaining<TakeSlotCommandValidator>();
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 builder.Services.ConfigureJwtAuthentication(builder.Configuration, apiName);
 builder.Services.ConfigureHttpClient(builder.Configuration);
 builder.Services.ConfigureServices();
+builder.Services.ConfigureAplicationServices();
 builder.Services.ConfigureOptions(builder.Configuration);
 
 builder.Services.AddAuthorization();

@@ -2,7 +2,7 @@
 
 namespace SlotBooking.Application.Slot.Commands
 {
-    public class TakeSlotCommand : IRequest<bool>
+    public class TakeSlotCommand : IRequest
     {
         public Guid FacilityId { get; set; }
         public DateTime Start { get; set; }

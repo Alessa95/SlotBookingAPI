@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace SlotBookingAPI.Middleware
@@ -24,15 +25,6 @@ namespace SlotBookingAPI.Middleware
 
             var statusCode = MapExceptionToStatusCode(exception);
 
-            if (exception is KeyNotFoundException)
-            {
-                statusCode = (int)HttpStatusCode.NotFound;
-            }
-            else if (exception is UnauthorizedAccessException)
-            {
-                statusCode = (int)HttpStatusCode.Unauthorized;
-            }
-
             var result = JsonConvert.SerializeObject(new { error = exception.Message });
             response.StatusCode = statusCode;
             return response.WriteAsync(result);
@@ -45,6 +37,7 @@ namespace SlotBookingAPI.Middleware
                 KeyNotFoundException => (int)HttpStatusCode.NotFound, 
                 UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized, 
                 ArgumentException => (int)HttpStatusCode.BadRequest,
+                ValidationException => (int)HttpStatusCode.BadRequest,
                 _ => (int)HttpStatusCode.InternalServerError,
             };
         }

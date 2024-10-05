@@ -23,8 +23,8 @@ namespace SlotBookingAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> TakeSlot([FromBody] TakeSlotCommand command)
         {
-            var result = await mediator.Send(command);
-            return Ok(result);
+            await mediator.Send(command);
+            return Ok();
         }
     }
 }

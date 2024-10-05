@@ -5,9 +5,9 @@ using SlotBooking.Infrastructure.HttpClients;
 
 namespace SlotBooking.Application.Slot.Commands
 {
-    public class TakeSlotCommandHandler(ApiClient apiClient) : IRequestHandler<TakeSlotCommand, bool>
+    public class TakeSlotCommandHandler(ApiClient apiClient) : IRequestHandler<TakeSlotCommand>
     {
-        public async Task<bool> Handle(TakeSlotCommand request, CancellationToken cancellationToken)
+        public async Task Handle(TakeSlotCommand request, CancellationToken cancellationToken)
         {
             var slot = new Slot
             {
@@ -17,8 +17,7 @@ namespace SlotBooking.Application.Slot.Commands
                 Patient = request.Patient,
                 FacilityId = request.FacilityId,
             };
-            await apiClient.PostAsync<string>("TakeSlot", slot);
-            return true;
+            await apiClient.PostAsync("TakeSlot", slot);
         }
     }
 

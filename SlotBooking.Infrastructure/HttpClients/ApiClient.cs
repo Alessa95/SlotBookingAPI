@@ -39,5 +39,13 @@ namespace SlotBooking.Infrastructure.HttpClients
             var responseContent = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(responseContent);
         }
+
+        public async Task PostAsync(string endpoint, object data)
+        {
+            var jsonData = JsonConvert.SerializeObject(data);
+            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
