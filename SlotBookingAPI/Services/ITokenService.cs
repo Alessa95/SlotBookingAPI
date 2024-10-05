@@ -1,4 +1,4 @@
-﻿using SlotBookingAPI.Model;
+﻿using SlotBookingAPI.Model.Authentication;
 
 namespace SlotBookingAPI.Services
 {

@@ -2,28 +2,28 @@
 {
     public class GetWeeklyAvailabilityResponse
     {
-        public Facility Facility { get; set; }
+        public required Facility Facility { get; set; }
         public int SlotDurationMinutes { get; set; }
-        public DayAvailability Monday { get; set; }
-        public DayAvailability Tuesday { get; set; }
-        public DayAvailability Wednesday { get; set; }
-        public DayAvailability Thursday { get; set; }
-        public DayAvailability Friday { get; set; }
-        public DayAvailability Saturday { get; set; }
-        public DayAvailability Sunday { get; set; }
+        public required DayAvailability Monday { get; set; }
+        public required DayAvailability Tuesday { get; set; }
+        public required DayAvailability Wednesday { get; set; }
+        public required DayAvailability Thursday { get; set; }
+        public required DayAvailability Friday { get; set; }
+        public required DayAvailability Saturday { get; set; }
+        public required DayAvailability Sunday { get; set; }
     }
 
     public class Facility
     {
         public Guid FacilityId { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; }
+        public required string Name { get; set; }
+        public required string Address { get; set; }
     }
 
     public class DayAvailability
     {
-        public WorkPeriod WorkPeriod { get; set; }
-        public List<BusySlot> BusySlots { get; set; }
+        public required WorkPeriod WorkPeriod { get; set; }
+        public required List<BusySlot> BusySlots { get; set; }
     }
 
     public class WorkPeriod

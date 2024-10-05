@@ -1,8 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SlotBooking.Application.Slot.Commands;
 using SlotBooking.Application.Slot.Queries;
+using SlotBookingAPI.Model.BookingSlot;
+using System.Globalization;
 
 namespace SlotBookingAPI.Controllers
 {
@@ -13,17 +14,20 @@ namespace SlotBookingAPI.Controllers
     {
 
         [HttpGet("{week}")]
-        public async Task<IActionResult> GetAvailability(string week)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SlotAvailabilityModel))]
+        public async Task<IActionResult> GetAvailability([FromRoute][WeekValidation]string week)
         {
-            var query = new GetWeeklyAvailabilityQuery(week);
+            // Date validation was passed
+            var query = new WeekDto(week);
             var result = await mediator.Send(query);
-            return Ok(result);
+            return Ok(SlotAvailabilityModel.FromDto(result));
         }
 
         [HttpPost]
-        public async Task<IActionResult> TakeSlot([FromBody] TakeSlotCommand command)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> TakeSlot([FromBody] TakeSlotModel request)
         {
-            await mediator.Send(command);
+            await mediator.Send(request.ToDto());
             return Ok();
         }
     }

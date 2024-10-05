@@ -4,6 +4,6 @@ namespace SlotBooking.Application.Slot.Services
 {
     public interface IAvailabilityService
     {
-        GetWeeklyAvailabilityQueryResponse GetAvailableSlots(DateTime monday, GetWeeklyAvailabilityResponse weeklyAvailability);
+        GetWeeklyAvailabilityDto GetAvailableSlots(DateTime monday, GetWeeklyAvailabilityResponse weeklyAvailability);
     }
 }

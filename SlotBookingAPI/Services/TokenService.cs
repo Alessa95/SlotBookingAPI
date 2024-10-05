@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using SlotBookingAPI.Model;
+using SlotBookingAPI.Model.Authentication;
 using SlotBookingAPI.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

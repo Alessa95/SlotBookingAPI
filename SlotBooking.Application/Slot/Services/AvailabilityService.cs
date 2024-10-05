@@ -4,9 +4,9 @@ namespace SlotBooking.Application.Slot.Services
 {
     public class AvailabilityService : IAvailabilityService
     {
-        public GetWeeklyAvailabilityQueryResponse GetAvailableSlots(DateTime monday, GetWeeklyAvailabilityResponse weeklyAvailability)
+        public GetWeeklyAvailabilityDto GetAvailableSlots(DateTime monday, GetWeeklyAvailabilityResponse weeklyAvailability)
         {
-            var availability = new GetWeeklyAvailabilityQueryResponse
+            var availability = new GetWeeklyAvailabilityDto
             {
                 Monday = GetAvailableSlotsForDay(weeklyAvailability.Monday, weeklyAvailability.SlotDurationMinutes, monday),
                 Tuesday = GetAvailableSlotsForDay(weeklyAvailability.Tuesday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(1)),
@@ -20,12 +20,12 @@ namespace SlotBooking.Application.Slot.Services
             return availability;
         }
 
-        private List<AvailableSlot> GetAvailableSlotsForDay(DayAvailability dayAvailability, int slotDurationMinutes, DateTime day)
+        private List<AvailableSlotDto> GetAvailableSlotsForDay(DayAvailability dayAvailability, int slotDurationMinutes, DateTime day)
         {
             if (dayAvailability == null || dayAvailability.WorkPeriod == null)
-                return new List<AvailableSlot>();
+                return new List<AvailableSlotDto>();
 
-            var availableSlots = new List<AvailableSlot>();
+            var availableSlots = new List<AvailableSlotDto>();
             var busySlots = dayAvailability.BusySlots ?? new List<BusySlot>();
 
             busySlots = busySlots.OrderBy(b => b.Start).ToList();
@@ -50,7 +50,7 @@ namespace SlotBooking.Application.Slot.Services
 
                 if (!isBusy)
                 {
-                    availableSlots.Add(new AvailableSlot
+                    availableSlots.Add(new AvailableSlotDto
                     {
                         Start = startOfDay,
                         End = slotEndTime

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Net.Mime;
 
 namespace SlotBookingAPI.Middleware
 {
@@ -21,7 +22,7 @@ namespace SlotBookingAPI.Middleware
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var response = context.Response;
-            response.ContentType = "application/json";
+            response.ContentType = MediaTypeNames.Application.Json;
 
             var statusCode = MapExceptionToStatusCode(exception);
 

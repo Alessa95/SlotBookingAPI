@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SlotBookingAPI.Model.Authentication;
 using SlotBookingAPI.Services;
+using System.Net.Mime;
 using TokenOptions = SlotBookingAPI.Options.TokenOptions;
 
 namespace SlotBookingAPI.Middleware
@@ -21,9 +23,7 @@ namespace SlotBookingAPI.Middleware
                 return;
             }
 
-            var formData = await context.Request.ReadFormAsync();
-            var tokenRequest = ParseTokenRequest(formData);
-
+            var tokenRequest = ParseTokenRequest(context);
             if (tokenRequest == null)
             {
                 await WriteErrorResponse(context, 400, "Invalid request data. Username and password are required.");
@@ -38,7 +38,7 @@ namespace SlotBookingAPI.Middleware
                 return;
             }
 
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = MediaTypeNames.Application.Json;
             await context.Response.WriteAsync(JsonConvert.SerializeObject(token, new JsonSerializerSettings { Formatting = Formatting.Indented }));
         }
 
@@ -49,20 +49,20 @@ namespace SlotBookingAPI.Middleware
 
         private bool IsValidRequest(HttpContext context)
         {
-            return context.Request.Method.Equals("POST") && context.Request.HasJsonContentType();
+            return context.Request.Method.Equals("POST") && context.Request.HasFormContentType;
         }
 
-        private Model.TokenRequest? ParseTokenRequest(IFormCollection formData)
+        private TokenRequest? ParseTokenRequest(HttpContext context)
         {
-            var username = formData["username"].ToString();
-            var password = formData["password"].ToString();
+            var username = context.Request.Form["username"];
+            var password = context.Request.Form["password"];
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 return null;
             }
 
-            return new Model.TokenRequest
+            return new TokenRequest
             {
                 User = username,
                 Password = password
@@ -72,7 +72,7 @@ namespace SlotBookingAPI.Middleware
         private Task WriteErrorResponse(HttpContext context, int statusCode, string message)
         {
             context.Response.StatusCode = statusCode;
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = MediaTypeNames.Application.Json;
             var errorResponse = new { message };
             return context.Response.WriteAsync(JsonConvert.SerializeObject(errorResponse, new JsonSerializerSettings { Formatting = Formatting.Indented }));
         }

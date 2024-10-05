@@ -1,4 +1,4 @@
-﻿namespace SlotBookingAPI.Model
+﻿namespace SlotBookingAPI.Model.Authentication
 {
     public class TokenResponse
     {

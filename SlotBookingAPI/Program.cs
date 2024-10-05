@@ -15,12 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddMediatR(options =>
 {
-    options.RegisterServicesFromAssemblies(typeof(GetWeeklyAvailabilityQueryHandler).Assembly);
+    options.RegisterServicesFromAssemblies(typeof(TakeSlotHandler).Assembly);
 });
-
-builder.Services.AddValidatorsFromAssemblyContaining<TakeSlotCommandValidator>();
-
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.ConfigureJwtAuthentication(builder.Configuration, apiName);
 builder.Services.ConfigureHttpClient(builder.Configuration);
