@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SlotBooking.Infrastructure.HttpClients
 {
-    public class ApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _httpClient;
 

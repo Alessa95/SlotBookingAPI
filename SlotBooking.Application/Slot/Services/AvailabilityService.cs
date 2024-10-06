@@ -8,19 +8,19 @@ namespace SlotBooking.Application.Slot.Services
         {
             var availability = new GetWeeklyAvailabilityDto
             {
-                Monday = GetAvailableSlotsForDay(weeklyAvailability.Monday, weeklyAvailability.SlotDurationMinutes, monday),
-                Tuesday = GetAvailableSlotsForDay(weeklyAvailability.Tuesday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(1)),
-                Wednesday = GetAvailableSlotsForDay(weeklyAvailability.Wednesday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(2)),
-                Thursday = GetAvailableSlotsForDay(weeklyAvailability.Thursday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(3)),
-                Friday = GetAvailableSlotsForDay(weeklyAvailability.Friday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(4)),
-                Saturday = GetAvailableSlotsForDay(weeklyAvailability.Saturday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(5)),
-                Sunday = GetAvailableSlotsForDay(weeklyAvailability.Sunday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(6))
+                Monday = GetAvailableSlotsPerDay(weeklyAvailability.Monday, weeklyAvailability.SlotDurationMinutes, monday),
+                Tuesday = GetAvailableSlotsPerDay(weeklyAvailability.Tuesday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(1)),
+                Wednesday = GetAvailableSlotsPerDay(weeklyAvailability.Wednesday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(2)),
+                Thursday = GetAvailableSlotsPerDay(weeklyAvailability.Thursday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(3)),
+                Friday = GetAvailableSlotsPerDay(weeklyAvailability.Friday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(4)),
+                Saturday = GetAvailableSlotsPerDay(weeklyAvailability.Saturday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(5)),
+                Sunday = GetAvailableSlotsPerDay(weeklyAvailability.Sunday, weeklyAvailability.SlotDurationMinutes, monday.AddDays(6))
             };
 
             return availability;
         }
 
-        private List<AvailableSlotDto> GetAvailableSlotsForDay(DayAvailability dayAvailability, int slotDurationMinutes, DateTime day)
+        public List<AvailableSlotDto> GetAvailableSlotsPerDay(DayAvailability dayAvailability, int slotDurationMinutes, DateTime day)
         {
             if (dayAvailability == null || dayAvailability.WorkPeriod == null)
                 return new List<AvailableSlotDto>();
