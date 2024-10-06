@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using SlotBooking.Infrastructure.HttpClients;
 using SlotBookingAPI.Options;
 using SlotBookingAPI.Services;
+using System.Security.Claims;
 using System.Text;
 
 namespace SlotBookingAPI
@@ -70,18 +71,22 @@ namespace SlotBookingAPI
         {
             services.AddHttpClient<ApiClient>((serviceProvider, client) =>
             {
-                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                var baseUrl = configuration["AvailabilityApi:ApiBaseUrl"] ?? throw new InvalidOperationException("Config setting is required: AvailabilityApi:ApiBaseUrl");
+                var baseUrl = configuration["AvailabilityApi:ApiBaseUrl"]
+                    ?? throw new InvalidOperationException("Config setting is required: AvailabilityApi:ApiBaseUrl");
+
                 client.BaseAddress = new Uri(baseUrl);
             });
 
-            services.AddTransient(provider =>
+            services.AddTransient<IApiClient, ApiClient>(provider =>
             {
                 var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
                 var httpClient = httpClientFactory.CreateClient(nameof(ApiClient));
-                var configuration = provider.GetRequiredService<IConfiguration>();
-                var username = configuration["AvailabilityApi:ApiUsername"] ?? throw new InvalidOperationException("Config setting is required: AvailabilityApi:ApiUsername");
-                var password = configuration["AvailabilityApi:ApiPassword"] ?? throw new InvalidOperationException("Config setting is required: AvailabilityApi:ApiPassword");
+
+                var username = configuration["AvailabilityApi:ApiUsername"]
+                    ?? throw new InvalidOperationException("Config setting is required: AvailabilityApi:ApiUsername");
+                var password = configuration["AvailabilityApi:ApiPassword"]
+                    ?? throw new InvalidOperationException("Config setting is required: AvailabilityApi:ApiPassword");
+
                 return new ApiClient(httpClient, username, password);
             });
         }

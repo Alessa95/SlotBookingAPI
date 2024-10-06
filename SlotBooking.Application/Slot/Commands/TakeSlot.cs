@@ -7,7 +7,7 @@ namespace SlotBooking.Application.Slot.Commands
     
     public readonly record struct PatientInformationDto(string Name, string SecondName, string Email, string Phone);
     
-    public class TakeSlotHandler(ApiClient apiClient) : IRequestHandler<TakeSlotDto>
+    public class TakeSlotHandler(IApiClient apiClient) : IRequestHandler<TakeSlotDto>
     {
 
         public async Task Handle(TakeSlotDto request, CancellationToken cancellationToken)

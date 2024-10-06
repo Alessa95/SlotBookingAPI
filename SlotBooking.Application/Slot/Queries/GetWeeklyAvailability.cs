@@ -19,7 +19,7 @@ namespace SlotBooking.Application.Slot.Queries
         
     public readonly record struct AvailableSlotDto(DateTime Start, DateTime End);
 
-    public class GetWeeklyAvailabilityHandler(ApiClient apiClient, IAvailabilityService availabilityService) : IRequestHandler<WeekDto, GetWeeklyAvailabilityDto>
+    public class GetWeeklyAvailabilityHandler(IApiClient apiClient, IAvailabilityService availabilityService) : IRequestHandler<WeekDto, GetWeeklyAvailabilityDto>
     {
         public async Task<GetWeeklyAvailabilityDto> Handle(WeekDto request, CancellationToken cancellationToken)
         {
