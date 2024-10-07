@@ -3,16 +3,16 @@ Instructions:
 1 - Install Docker Desktop ([Download Docker Desktop | Docker](https://www.docker.com/products/docker-desktop/))
 2 - Go to SlotBookingAPI
 3 - Execute the docker command to create image: docker build -t slotbookingapi -f .\SlotBookingAPI\Dockerfile .
-4 - Execute the docker command to run image: docker run -p 32777:80 slotbookingapi
+4 - Execute the docker command to run image: docker run -p 8080:8080 slotbookingapi
    !!!! It is important to mention that, for testing purposes only, we will use port 80 for now.
 5 - Get authentication token: Open Postman and add a new POST request:
-    - url: http://localhost:32777/token
+    - url: http://localhost:8080/token
     - Body (Format: x-www-form-urlencoded): 
     {
         username: (get from appSettings [AvailabilityApi:ApiUsername])
         password: (get from appSettings [AvailabilityApi:ApiPassword])
     }
-6 - Open Swagger in http://localhost:32777/swagger.
+6 - Open Swagger in http://localhost:8080/swagger.
 7 - Authenticate
 8 - Get available slots using GET /Slot/{startDay}
     Ex: startDay: "2024-10-08T00:00:00"
