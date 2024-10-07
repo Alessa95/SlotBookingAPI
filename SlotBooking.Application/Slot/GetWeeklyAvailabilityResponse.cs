@@ -1,4 +1,4 @@
-﻿namespace SlotBooking.Application.Slot.Queries
+﻿namespace SlotBooking.Application.Slot
 {
     public class GetWeeklyAvailabilityResponse
     {

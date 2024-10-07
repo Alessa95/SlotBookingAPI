@@ -5,7 +5,7 @@ using System.Net.Mime;
 
 namespace SlotBookingAPI.Middleware
 {
-    public class ErrorHandlerMiddleware(RequestDelegate _next)
+    public class ErrorHandlerMiddleware(RequestDelegate _next, ILogger<ErrorHandlerMiddleware> logger)
     {
         public async Task Invoke(HttpContext context)
         {
@@ -26,6 +26,7 @@ namespace SlotBookingAPI.Middleware
 
             var statusCode = MapExceptionToStatusCode(exception);
 
+            logger.LogError(exception.Message);
             var result = JsonConvert.SerializeObject(new { error = exception.Message });
             response.StatusCode = statusCode;
             return response.WriteAsync(result);
