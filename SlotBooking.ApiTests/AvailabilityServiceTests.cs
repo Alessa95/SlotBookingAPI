@@ -1,4 +1,5 @@
-﻿using SlotBooking.Application.Slot.Queries;
+﻿using FluentAssertions;
+using SlotBooking.Application.Slot;
 using SlotBooking.Application.Slot.Services;
 
 namespace SlotBooking.ApiTests
@@ -18,7 +19,8 @@ namespace SlotBooking.ApiTests
         public void GetAvailableSlots_ShouldReturnSlots_ExcludingBusySlots()
         {
             // Arrange
-            var monday = new DateTime(2024, 10, 7); // A Monday
+            var startDate = DateTime.UtcNow.AddDays(1); 
+            startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
 
             var dayAvailability = new DayAvailability
             {
@@ -31,28 +33,28 @@ namespace SlotBooking.ApiTests
                 },
                 BusySlots = new List<BusySlot>
                 {
-                    new BusySlot { Start = monday.AddHours(10), End = monday.AddHours(10).AddMinutes(30) },
+                    new BusySlot { Start = startDate.AddHours(10), End = startDate.AddHours(10).AddMinutes(30) },
                 }
             };
 
             int slotDurationMinutes = 30;
 
             // Act
-            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, monday);
+            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, startDate);
 
             // Assert
-            // Ensure slots are created, and the busy slot is excluded
-            Assert.That(availableSlots.Count, Is.GreaterThan(0));
-            Assert.IsFalse(availableSlots.Any(slot => slot.Start.Hour == 10 && slot.End.Hour == 10 && slot.End.Minute == 30)); // Busy slot must not appear
+            availableSlots.Count().Should().BeGreaterThan(0);
+            availableSlots.Should().NotContain("10:00", "10:30");
         }
 
         [Test]
         public void GetAvailableSlots_ShouldReturnSlots_ExcludingLunchPeriod()
         {
             // Arrange
-            var monday = new DateTime(2024, 10, 7); // A Monday
-            var lunchStart = monday.AddHours(12);
-            var lunchEnd = monday.AddHours(13);   
+            var startDate = DateTime.UtcNow.AddDays(1);
+            startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
+            var lunchStart = startDate.AddHours(12);
+            var lunchEnd = startDate.AddHours(13);   
 
             var dayAvailability = new DayAvailability
             {
@@ -69,19 +71,24 @@ namespace SlotBooking.ApiTests
             int slotDurationMinutes = 30;
 
             // Act
-            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, monday);
+            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, startDate);
 
             // Assert
-            // Ensure slots are created and lunch break is skipped
-            Assert.That(availableSlots.Count, Is.GreaterThan(0));
-            Assert.IsFalse(availableSlots.Any(slot => slot.Start < lunchEnd && slot.End > lunchStart)); // Lunch hour must not appear
+            availableSlots.Count().Should().BeGreaterThan(0);
+            var invalidLunchTimeSlots = availableSlots.Where(slot =>
+            {
+                var time = TimeSpan.Parse(slot);
+                return time >= TimeSpan.FromHours(12) && time < TimeSpan.FromHours(13);
+            });
+            invalidLunchTimeSlots.Should().BeEmpty();
         }
 
         [Test]
         public void GetAvailableSlots_ShouldReturnEmptyList_WhenDayIsFullyBusy()
         {
             // Arrange
-            var monday = new DateTime(2024, 10, 7); // A Monday
+            var startDate = DateTime.UtcNow.AddDays(1);
+            startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
 
             var dayAvailability = new DayAvailability
             {
@@ -94,27 +101,27 @@ namespace SlotBooking.ApiTests
                 },
                 BusySlots = new List<BusySlot>
             {
-                new BusySlot { Start = monday.AddHours(9), End = monday.AddHours(17) } // Fully busy
+                new BusySlot { Start = startDate.AddHours(9), End = startDate.AddHours(17) } // Fully busy
             }
             };
 
             int slotDurationMinutes = 30;
 
             // Act
-            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, monday);
+            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, startDate);
 
             // Assert
-            // Ensure no available slots when the entire workday is busy
-            Assert.That(availableSlots.Count, Is.EqualTo(0));
+            availableSlots.Should().BeEmpty();
         }
 
         [Test]
         public void GetAvailableSlots_ShouldReturnSlots_AfterLunchAndBusySlots()
         {
             // Arrange
-            var monday = new DateTime(2024, 10, 7); // A Monday
-            var lunchStart = monday.AddHours(12);
-            var lunchEnd = monday.AddHours(13);
+            var startDate = DateTime.UtcNow.AddDays(1);
+            startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
+            var lunchStart = startDate.AddHours(12);
+            var lunchEnd = startDate.AddHours(13);
 
             var dayAvailability = new DayAvailability
             {
@@ -127,20 +134,25 @@ namespace SlotBooking.ApiTests
                 },
                 BusySlots = new List<BusySlot>
                 {
-                    new BusySlot { Start = monday.AddHours(10), End = monday.AddHours(10).AddMinutes(30) },
+                    new BusySlot { Start = startDate.AddHours(10), End = startDate.AddHours(10).AddMinutes(30) },
                 }
             };
 
             int slotDurationMinutes = 30;
 
             // Act
-            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, monday);
+            var availableSlots = _availabilityService.GetAvailableSlotsPerDay(dayAvailability, slotDurationMinutes, startDate);
+            var invalidLunchTimeSlots = availableSlots.Where(slot =>
+            {
+                var time = TimeSpan.Parse(slot);
+                return time >= TimeSpan.FromHours(12) && time < TimeSpan.FromHours(13);
+            });
+
 
             // Assert
-            // Ensure that the available slots exclude busy slots and lunch break
-            Assert.That(availableSlots.Count, Is.GreaterThan(0));
-            Assert.IsFalse(availableSlots.Any(slot => slot.Start.Hour == 10 && slot.End.Hour == 10 && slot.End.Minute == 30)); // Busy slot must not appear
-            Assert.IsFalse(availableSlots.Any(slot => slot.Start < lunchEnd && slot.End > lunchStart)); // Lunch hour must not appear
+            availableSlots.Count.Should().BeGreaterThan(0);
+            availableSlots.Should().NotContain("10:00", "10:30");
+            invalidLunchTimeSlots.Should().BeEmpty();
         }
     }
 }

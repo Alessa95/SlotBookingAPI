@@ -5,28 +5,26 @@ using System.Globalization;
 
 namespace SlotBooking.Application.Slot.Queries
 {
-    public readonly record struct WeekDto(string Week) : IRequest<GetWeeklyAvailabilityDto>;
+    public readonly record struct AvailabilityFromDateDto(DateTime StartDay) : IRequest<GetWeeklyAvailabilityDto>;
 
     public readonly record struct GetWeeklyAvailabilityDto(
-        IEnumerable<AvailableSlotDto> Monday,
-        IEnumerable<AvailableSlotDto> Tuesday,
-        IEnumerable<AvailableSlotDto> Wednesday,
-        IEnumerable<AvailableSlotDto> Thursday,
-        IEnumerable<AvailableSlotDto> Friday,
-        IEnumerable<AvailableSlotDto> Saturday,
-        IEnumerable<AvailableSlotDto> Sunday
+        IEnumerable<string> Monday,
+        IEnumerable<string> Tuesday,
+        IEnumerable<string> Wednesday,
+        IEnumerable<string> Thursday,
+        IEnumerable<string> Friday,
+        IEnumerable<string> Saturday,
+        IEnumerable<string> Sunday
     );
         
-    public readonly record struct AvailableSlotDto(DateTime Start, DateTime End);
-
-    public class GetWeeklyAvailabilityHandler(IApiClient apiClient, IAvailabilityService availabilityService) : IRequestHandler<WeekDto, GetWeeklyAvailabilityDto>
+    public class GetWeeklyAvailabilityHandler(IApiClient apiClient, IAvailabilityService availabilityService) : IRequestHandler<AvailabilityFromDateDto, GetWeeklyAvailabilityDto>
     {
-        public async Task<GetWeeklyAvailabilityDto> Handle(WeekDto request, CancellationToken cancellationToken)
+        public async Task<GetWeeklyAvailabilityDto> Handle(AvailabilityFromDateDto request, CancellationToken cancellationToken)
         {
-            string endpoint = $"GetWeeklyAvailability/{request.Week}";
+            var monday = availabilityService.GetMondayOfWeek(request.StartDay);
+            string endpoint = $"GetWeeklyAvailability/{monday.ToString("yyyyMMdd")}";
             var availability = await apiClient.GetAsync<GetWeeklyAvailabilityResponse>(endpoint);
-            var date = DateTime.ParseExact(request.Week, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None);
-            return availabilityService.GetAvailableSlots(date, availability);
+            return availabilityService.GetAvailableSlots(monday, request.StartDay, availability);
         }
     }
 }

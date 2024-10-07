@@ -4,25 +4,25 @@ namespace SlotBookingAPI.Model.BookingSlot
 {
     public class SlotAvailabilityModel
     {
-        public required IEnumerable<SlotModel> Monday { get; set; }
-        public required IEnumerable<SlotModel> Tuesday { get; set; }
-        public required IEnumerable<SlotModel> Wednesday { get; set; }
-        public required IEnumerable<SlotModel> Thursday { get; set; }
-        public required IEnumerable<SlotModel> Friday { get; set; }
-        public required IEnumerable<SlotModel> Saturday { get; set; }
-        public required IEnumerable<SlotModel> Sunday { get; set; }
+        public required IEnumerable<string> Monday { get; set; }
+        public required IEnumerable<string> Tuesday { get; set; }
+        public required IEnumerable<string> Wednesday { get; set; }
+        public required IEnumerable<string> Thursday { get; set; }
+        public required IEnumerable<string> Friday { get; set; }
+        public required IEnumerable<string> Saturday { get; set; }
+        public required IEnumerable<string> Sunday { get; set; }
 
         public static SlotAvailabilityModel FromDto(GetWeeklyAvailabilityDto dto)
         {
             return new SlotAvailabilityModel
             {
-                Monday = dto.Monday?.Select(SlotModel.FromDto) ?? [],
-                Tuesday = dto.Tuesday?.Select(SlotModel.FromDto) ?? [],
-                Wednesday = dto.Wednesday?.Select(SlotModel.FromDto) ?? [],
-                Thursday = dto.Thursday?.Select(SlotModel.FromDto) ?? [],
-                Friday = dto.Friday?.Select(SlotModel.FromDto) ?? [],
-                Saturday = dto.Saturday?.Select(SlotModel.FromDto) ?? [],
-                Sunday = dto.Sunday?.Select(SlotModel.FromDto) ?? [],
+                Monday = dto.Monday?.Select(x => x) ?? [],
+                Tuesday = dto.Tuesday?.Select(x => x) ?? [],
+                Wednesday = dto.Wednesday?.Select(x => x) ?? [],
+                Thursday = dto.Thursday?.Select(x => x) ?? [],
+                Friday = dto.Friday?.Select(x => x) ?? [],
+                Saturday = dto.Saturday?.Select(x => x) ?? [],
+                Sunday = dto.Sunday?.Select(x => x) ?? [],
             };
         }
     }

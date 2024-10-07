@@ -1,3 +1,4 @@
+using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,27 +37,28 @@ namespace SlotBooking.ApiTests
         }
 
         [Test]
-        public async Task GetAvailability_ReturnsOkResult_WhenWeekIsValid()
+        public async Task GetAvailability_ReturnsOkResult_WhenStartDateIsValid()
         {
             // Arrange
-            var week = "20241007";
-            var weekDto = new WeekDto(week);
+            var startDate = DateTime.UtcNow.AddDays(1);
+            startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
+            var weekDto = new AvailabilityFromDateDto(startDate);
 
             var expectedAvailabilityDto = new GetWeeklyAvailabilityDto(
-                Monday: new List<AvailableSlotDto> { new AvailableSlotDto(DateTime.Parse("2024-10-07T09:00"), DateTime.Parse("2024-10-07T09:30")) },
-                Tuesday: new List<AvailableSlotDto>(),
-                Wednesday: new List<AvailableSlotDto>(),
-                Thursday: new List<AvailableSlotDto>(),
-                Friday: new List<AvailableSlotDto>(),
-                Saturday: new List<AvailableSlotDto>(),
-                Sunday: new List<AvailableSlotDto>()
+                Monday: new List<string> { "09:00" },
+                Tuesday: new List<string>(),
+                Wednesday: new List<string>(),
+                Thursday: new List<string>(),
+                Friday: new List<string>(),
+                Saturday: new List<string>(),
+                Sunday: new List<string>()
             );
 
             // Act 
-            _mediatorMock.Setup(m => m.Send(It.IsAny<WeekDto>(), It.IsAny<CancellationToken>()))
+            _mediatorMock.Setup(m => m.Send(It.IsAny<AvailabilityFromDateDto>(), It.IsAny<CancellationToken>()))
                          .ReturnsAsync(expectedAvailabilityDto);
 
-            var result = await _controller.GetAvailability(week);
+            var result = await _controller.GetAvailability(startDate);
 
             // Assert
             var okResult = result as OkObjectResult;
@@ -64,29 +66,27 @@ namespace SlotBooking.ApiTests
             Assert.That(okResult.StatusCode, Is.EqualTo(200));
 
             var returnedModel = okResult.Value as SlotAvailabilityModel;
-            Assert.That(returnedModel, Is.Not.Null);
-            Assert.That(returnedModel.Monday.Count(), Is.EqualTo(1));
-            Assert.That(returnedModel.Monday.First().Start, Is.EqualTo(DateTime.Parse("2024-10-07T09:00")));
-            Assert.That(returnedModel.Monday.First().End, Is.EqualTo(DateTime.Parse("2024-10-07T09:30")));
-            Assert.That(returnedModel.Tuesday.Count(), Is.EqualTo(0));
-            Assert.That(returnedModel.Wednesday.Count(), Is.EqualTo(0));
-            Assert.That(returnedModel.Thursday.Count(), Is.EqualTo(0));
-            Assert.That(returnedModel.Friday.Count(), Is.EqualTo(0));
-            Assert.That(returnedModel.Saturday.Count(), Is.EqualTo(0));
-            Assert.That(returnedModel.Sunday.Count(), Is.EqualTo(0));
+            returnedModel.Should().NotBeNull();
+            returnedModel.Monday.Count().Should().Be(1);
+            returnedModel.Monday.First().Should().Be("09:00");
+            returnedModel.Tuesday.Should().BeEmpty();
+            returnedModel.Wednesday.Should().BeEmpty();
+            returnedModel.Thursday.Should().BeEmpty();
+            returnedModel.Friday.Should().BeEmpty();
+            returnedModel.Saturday.Should().BeEmpty();
+            returnedModel.Sunday.Should().BeEmpty();
         }
 
 
         [Test]
-        [TestCase("invalidFormat", "Week must be in 'yyyyMMdd' format.")]
-        [TestCase("20241008", "The week must represent a Monday.")]
-        public async Task GetAvailability_ReturnsBadRequest_WhenWeekIsNotValid(string week, string expectedErrorMessage)
+        public async Task GetAvailability_ReturnsBadRequest_WhenStartDateIsNotValid()
         {
             // Arrange
-            _controller.ModelState.AddModelError("week", expectedErrorMessage);
+            var date = DateTime.UtcNow.AddDays(-1);
+            _controller.ModelState.AddModelError("week", "Invalid date");
 
             // Act
-            var result = await _controller.GetAvailability(week);
+            var result = await _controller.GetAvailability(date);
 
             // Assert
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -105,10 +105,8 @@ namespace SlotBooking.ApiTests
                     SecondName = "secondname",
                     Phone = "555 44 44 55"
                 },
-                FacilityId = new Guid(),
                 Comments = "fake comment",
-                Start = DateTime.Now,
-                End = DateTime.Now.AddDays(1),
+                Slot = DateTime.UtcNow,
             };
 
             _mediatorMock.Setup(m => m.Send(It.IsAny<TakeSlotDto>(), default)).Returns(Task.CompletedTask);
@@ -139,10 +137,8 @@ namespace SlotBooking.ApiTests
                     SecondName = secondName,
                     Phone = phone
                 },
-                FacilityId = Guid.NewGuid(),
                 Comments = "This is a comment",
-                End =  validateDate ? DateTime.Now : DateTime.Now.AddDays(1),
-                Start = validateDate ? DateTime.Now.AddDays(1) : DateTime.Now,
+                Slot = DateTime.UtcNow
             };
 
             _controller.ModelState.AddModelError("slot", expectedErrorMessage);
