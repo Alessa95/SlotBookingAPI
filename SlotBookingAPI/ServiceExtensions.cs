@@ -4,7 +4,6 @@ using Microsoft.OpenApi.Models;
 using SlotBooking.Infrastructure.HttpClients;
 using SlotBookingAPI.Options;
 using SlotBookingAPI.Services;
-using System.Security.Claims;
 using System.Text;
 
 namespace SlotBookingAPI
@@ -93,8 +92,8 @@ namespace SlotBookingAPI
 
         public static void ConfigureServices(this IServiceCollection services)
         {
-            services.AddSingleton<ITokenService, TokenService>();
-            services.AddSingleton<IAuthService, AuthService>();
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IAuthService, AuthService>();
         }
 
         public static void ConfigureOptions(this IServiceCollection services, IConfiguration configuration)

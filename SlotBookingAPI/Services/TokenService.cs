@@ -43,6 +43,7 @@ namespace SlotBookingAPI.Services
             return
             [
                 new Claim(ClaimTypes.NameIdentifier, username),
+                // TODO: Use real user email (This is an example)
                 new Claim(ClaimTypes.Email, $"{username}@slotBooking.com"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             ];

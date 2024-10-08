@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SlotBooking.API.Model;
 using SlotBooking.Application.Slot.Queries;
 using SlotBookingAPI.Model.BookingSlot;
 
@@ -9,7 +10,7 @@ namespace SlotBookingAPI.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class SlotController(IMediator mediator) : ControllerBase
+    public class SlotBookingController(IMediator mediator) : ControllerBase
     {
         /// <summary>
         /// Retrieves the available slots for a specific week.

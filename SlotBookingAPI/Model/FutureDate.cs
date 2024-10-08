@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SlotBookingAPI.Model.BookingSlot
+namespace SlotBooking.API.Model
 {
-    public class FutureDate: ValidationAttribute
+    public class FutureDate : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

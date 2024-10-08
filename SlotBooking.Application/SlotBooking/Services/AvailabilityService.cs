@@ -2,27 +2,27 @@
 
 namespace SlotBooking.Application.Slot.Services
 {
-    public class AvailabilityService : IAvailabilityService
+    public class AvailabilityService() : IAvailabilityService
     {
         public GetWeeklyAvailabilityDto GetAvailableSlots(DateTime monday, DateTime currentDate, GetWeeklyAvailabilityResponse weeklyAvailability)
         {
             return new GetWeeklyAvailabilityDto
             {
-                Monday = GetDayAvailability(weeklyAvailability.Monday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Monday, monday, currentDate),
-                Tuesday = GetDayAvailability(weeklyAvailability.Tuesday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Tuesday, monday, currentDate),
-                Wednesday = GetDayAvailability(weeklyAvailability.Wednesday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Wednesday, monday, currentDate),
-                Thursday = GetDayAvailability(weeklyAvailability.Thursday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Thursday, monday, currentDate),
-                Friday = GetDayAvailability(weeklyAvailability.Friday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Friday, monday, currentDate),
-                Saturday = GetDayAvailability(weeklyAvailability.Saturday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Saturday, monday, currentDate),
-                Sunday = GetDayAvailability(weeklyAvailability.Sunday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Sunday, monday, currentDate)
+                Monday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Monday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Monday, monday, currentDate),
+                Tuesday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Tuesday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Tuesday, monday, currentDate),
+                Wednesday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Wednesday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Wednesday, monday, currentDate),
+                Thursday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Thursday, weeklyAvailability.SlotDurationMinutes,DayOfWeek.Thursday, monday, currentDate),
+                Friday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Friday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Friday, monday, currentDate),
+                Saturday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Saturday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Saturday, monday, currentDate),
+                Sunday = GetAvailableSlotsForDayAfterCurrentDate(weeklyAvailability.Sunday, weeklyAvailability.SlotDurationMinutes, DayOfWeek.Sunday, monday, currentDate)
             };
         }
 
-        public List<string> GetDayAvailability(DayAvailability dayAvailability, int slotDurationMinutes, DayOfWeek dayOfWeek, DateTime monday, DateTime currentDate)
+        public IEnumerable<string> GetAvailableSlotsForDayAfterCurrentDate(DayAvailability dayAvailability, int slotDurationMinutes, DayOfWeek dayOfWeek, DateTime monday, DateTime currentDate)
         {
             var date = monday.AddDays((int)dayOfWeek - (int)DayOfWeek.Monday);
             if (date.Date < currentDate.Date)
-                return new List<string>();
+                return [];
 
             return GetAvailableSlotsPerDay(
                 dayAvailability,
@@ -47,45 +47,35 @@ namespace SlotBooking.Application.Slot.Services
             DateTime lunchEnd = day.Date.AddHours(workPeriod.LunchEndHour);
 
             // Adjust startOfDay if the given day starts later than the work period start
-            startOfDay = startOfDay < day ? day : startOfDay;
+            if(startOfDay < day)
+                startOfDay = day;
 
-            // Ensure endOfDay is not earlier than startOfDay
             if (endOfDay <= startOfDay)
                 return availableSlots;
 
             TimeSpan slotDuration = TimeSpan.FromMinutes(slotDurationMinutes);
+            DateTime slotStartTime = startOfDay;
 
-            for (DateTime currentSlotStart = startOfDay; currentSlotStart.Add(slotDuration) <= endOfDay; currentSlotStart = currentSlotStart.Add(slotDuration))
+            while (slotStartTime.Add(slotDuration) <= endOfDay)
             {
-                DateTime currentSlotEnd = currentSlotStart.Add(slotDuration);
+                DateTime slotEndTime = slotStartTime.Add(slotDuration);
 
-                var isLunchTime = currentSlotStart < lunchEnd && currentSlotEnd > lunchStart;
+                var isLunchTime = slotStartTime < lunchEnd && slotEndTime > lunchStart;
                 if (isLunchTime)
                 {
-                    currentSlotStart = lunchEnd;
+                    slotStartTime = lunchEnd;
                     continue;
                 }
 
-                bool isBusy = busySlots.Any(b => currentSlotStart < b.End && currentSlotEnd > b.Start);
+                bool isBusy = busySlots.Any(b => slotStartTime < b.End && slotEndTime > b.Start);
                 if (!isBusy)
                 {
-                    availableSlots.Add(currentSlotStart.ToString("HH:mm"));
+                    availableSlots.Add(slotStartTime.ToString("HH:mm"));
                 }
-            }
 
+                slotStartTime = slotStartTime.Add(slotDuration);
+            }
             return availableSlots;
-        }
-
-        public DateTime GetMondayOfWeek(DateTime date)
-        {
-            int difference = date.DayOfWeek - DayOfWeek.Monday;
-
-            if (difference < 0)
-            {
-                difference += 7;
-            }
-
-            return date.AddDays(-difference).Date;
         }
 
         public DayAvailability GetDayAvailabilityForDate(DateTime date, GetWeeklyAvailabilityResponse weeklyAvailability)

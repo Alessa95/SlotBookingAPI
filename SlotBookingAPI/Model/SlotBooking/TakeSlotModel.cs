@@ -1,4 +1,5 @@
-﻿using SlotBooking.Application.Slot.Commands;
+﻿using SlotBooking.API.Model;
+using SlotBooking.Application.Slot.Commands;
 using System.ComponentModel.DataAnnotations;
 
 namespace SlotBookingAPI.Model.BookingSlot
