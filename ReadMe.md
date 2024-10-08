@@ -15,11 +15,11 @@
 - Body **(Format: x-www-form-urlencoded)**: 
 ```json
 {
-    username: (get from appSettings [AvailabilityApi:ApiUsername])
-    password: (get from appSettings [AvailabilityApi:ApiPassword])
+    "username": "get from appSettings [AvailabilityApi:ApiUsername]",
+    "password": "get from appSettings [AvailabilityApi:ApiPassword]"
 }
 ```
-
+> **Warning:** For testing purposes only, we will use these credentials.
 
 6 - Open Swagger in http://localhost:8080/swagger.
 
@@ -56,3 +56,4 @@ This will book the slot if it is available (past dates are not allowed, and avai
 Here you will find basic unit tests:
 - **SlotControllerTest** verifies that the controller's models are properly validated.
 - **AvailabilityServiceTest** verifies the calculation performed on the data obtained from the external API to be used by this API.
+- **DateTimeUtilsTest** verifies the functionality of date manipulation methods. 
