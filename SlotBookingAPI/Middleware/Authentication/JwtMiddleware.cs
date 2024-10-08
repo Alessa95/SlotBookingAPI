@@ -5,7 +5,7 @@ using SlotBookingAPI.Services;
 using System.Net.Mime;
 using TokenOptions = SlotBookingAPI.Options.TokenOptions;
 
-namespace SlotBookingAPI.Middleware
+namespace SlotBooking.API.Middleware.Authentication
 {
     public class JwtMiddleware(RequestDelegate next, IOptions<TokenOptions> tokenOptions, ITokenService tokenService)
     {
@@ -57,7 +57,7 @@ namespace SlotBookingAPI.Middleware
             var username = context.Request.Form["username"];
             var password = context.Request.Form["password"];
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 return null;
             }

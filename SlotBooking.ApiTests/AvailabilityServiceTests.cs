@@ -7,7 +7,7 @@ namespace SlotBooking.ApiTests
     [TestFixture]
     public class AvailabilityServiceTests
     {
-        private AvailabilityService _availabilityService;
+        private IAvailabilityService _availabilityService;
 
         [SetUp]
         public void Setup()

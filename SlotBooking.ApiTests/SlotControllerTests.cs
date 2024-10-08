@@ -16,7 +16,7 @@ namespace SlotBooking.ApiTests
     public class SlotControllerTests
     {
         private Mock<IMediator> _mediatorMock;
-        private SlotController _controller;
+        private SlotBookingController _controller;
         private Mock<IApiClient> _apiClientMock;
         private Mock<IAvailabilityService> _availabilityServiceMock;
 
@@ -24,7 +24,7 @@ namespace SlotBooking.ApiTests
         public void Setup()
         {
             _mediatorMock = new Mock<IMediator>();
-            _controller = new SlotController(_mediatorMock.Object);
+            _controller = new SlotBookingController(_mediatorMock.Object);
 
             var httpContext = new DefaultHttpContext();
             _controller.ControllerContext = new ControllerContext()

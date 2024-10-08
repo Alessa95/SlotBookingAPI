@@ -1,16 +1,13 @@
-using FluentValidation;
-using MediatR;
+using SlotBooking.API.Middleware.Authentication;
+using SlotBooking.API.Middleware.Errors;
 using SlotBooking.Application;
 using SlotBooking.Application.Slot.Commands;
-using SlotBooking.Application.Slot.Queries;
 using SlotBookingAPI;
-using SlotBookingAPI.Middleware;
 
 var apiName = "SlotBooking API";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddMediatR(options =>
@@ -28,7 +25,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// TODO: REMOVE Swagger in Production Environment (JUST FOR TEST)
+// TODO: REMOVE Swagger in Production Environment (JUST FOR TESTING)
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();

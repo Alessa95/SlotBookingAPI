@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 
 namespace SlotBooking.Infrastructure.HttpClients
@@ -33,7 +34,7 @@ namespace SlotBooking.Infrastructure.HttpClients
         public async Task<T> PostAsync<T>(string endpoint, object data)
         {
             var jsonData = JsonConvert.SerializeObject(data);
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var content = new StringContent(jsonData, Encoding.UTF8, MediaTypeNames.Application.Json);
             var response = await _httpClient.PostAsync(endpoint, content);
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -43,7 +44,7 @@ namespace SlotBooking.Infrastructure.HttpClients
         public async Task PostAsync(string endpoint, object data)
         {
             var jsonData = JsonConvert.SerializeObject(data);
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var content = new StringContent(jsonData, Encoding.UTF8, MediaTypeNames.Application.Json);
             var response = await _httpClient.PostAsync(endpoint, content);
             response.EnsureSuccessStatusCode();
         }

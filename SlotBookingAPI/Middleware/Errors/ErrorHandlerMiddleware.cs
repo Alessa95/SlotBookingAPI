@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Mime;
 
-namespace SlotBookingAPI.Middleware
+namespace SlotBooking.API.Middleware.Errors
 {
     public class ErrorHandlerMiddleware(RequestDelegate _next, ILogger<ErrorHandlerMiddleware> logger)
     {
@@ -32,12 +32,12 @@ namespace SlotBookingAPI.Middleware
             return response.WriteAsync(result);
         }
 
-        private int MapExceptionToStatusCode(Exception exception)
+        private static int MapExceptionToStatusCode(Exception exception)
         {
             return exception switch
             {
-                KeyNotFoundException => (int)HttpStatusCode.NotFound, 
-                UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized, 
+                KeyNotFoundException => (int)HttpStatusCode.NotFound,
+                UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
                 ArgumentException => (int)HttpStatusCode.BadRequest,
                 ValidationException => (int)HttpStatusCode.BadRequest,
                 _ => (int)HttpStatusCode.InternalServerError,

@@ -2,7 +2,7 @@
 {
     public class TokenRequest
     {
-        public string User { get; set; }
-        public string Password { get; set; }
+        public required string User { get; set; }
+        public required string Password { get; set; }
     }
 }

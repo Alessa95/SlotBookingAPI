@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SlotBooking.Application.Slot.Services;
+using SlotBooking.Application.Utils;
 
 namespace SlotBooking.Application
 {
@@ -7,7 +8,8 @@ namespace SlotBooking.Application
     {
         public static void ConfigureAplicationServices(this IServiceCollection services)
         {
-            services.AddSingleton<IAvailabilityService, AvailabilityService>();
+            services.AddTransient<IAvailabilityService, AvailabilityService>();
+            services.AddTransient<IDateTimeUtils,  DateTimeUtils>();
         }
     }
 }
