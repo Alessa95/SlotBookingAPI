@@ -2,7 +2,7 @@
 
 1 - Install Docker Desktop ([Download Docker Desktop | Docker](https://www.docker.com/products/docker-desktop/))
 
-2 - Go to SlotBookingAPI
+2 - Go to solution root
 
 3 - Execute the docker command to create image: `docker build -t slotbookingapi -f .\SlotBookingAPI\Dockerfile .`
 
